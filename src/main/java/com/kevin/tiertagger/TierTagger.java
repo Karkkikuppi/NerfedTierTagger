@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.kevin.tiertagger.config.TierTaggerConfig;
 import com.kevin.tiertagger.model.GameMode;
 import com.kevin.tiertagger.model.PlayerInfo;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
@@ -68,7 +69,7 @@ public class TierTagger implements ModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registry) -> dispatcher.register(
                 literal(MOD_ID)
-                        .then(argument("player", PlayerArgumentType.player())
+                        .then(argument("player", StringArgumentType.string())
                                 .executes(TierTagger::displayTierInfo))));
 
         Ukutils.registerKeybinding(new KeyBinding("tiertagger.keybind.gamemode", GLFW.GLFW_KEY_UNKNOWN, "tiertagger.name"),
@@ -90,7 +91,7 @@ public class TierTagger implements ModInitializer {
             case TIER -> getPlayerTier(player.getUuid())
                     .map(entry -> {
                         String tier = getTierText(entry.getValue());
-                        Text formattedTier = Text.literal(tier).withColor(getTierColor(tier));
+                        Text formattedTier = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier))).formatted(Formatting.BOLD);
                         Text modeIcon = Text.literal(entry.getKey().getIcon()).styled(s -> s.withColor(entry.getKey().getIconColor()));
                         return Text.empty().append(modeIcon).append(" ").append(formattedTier);
                     })
@@ -101,8 +102,9 @@ public class TierTagger implements ModInitializer {
         };
 
         if (following != null) {
-            following.append(Text.literal(" | ").formatted(Formatting.GRAY));
-            return following.append(text);
+            return text.copy()
+                    .append(Text.literal(" | ").formatted(Formatting.GRAY))
+                    .append(following);
         }
 
         return text;
@@ -143,10 +145,10 @@ public class TierTagger implements ModInitializer {
     }
 
     private static int displayTierInfo(CommandContext<FabricClientCommandSource> ctx) {
-        PlayerArgumentType.PlayerSelector selector = ctx.getArgument("player", PlayerArgumentType.PlayerSelector.class);
+        String playerName = ctx.getArgument("player", String.class);
 
         Optional<PlayerInfo> info = ctx.getSource().getWorld().getPlayers().stream()
-                .filter(p -> p.getNameForScoreboard().equalsIgnoreCase(selector.name()) || p.getUuidAsString().equalsIgnoreCase(selector.name()))
+                .filter(p -> p.getNameForScoreboard().equalsIgnoreCase(playerName) || p.getUuidAsString().equalsIgnoreCase(playerName))
                 .findFirst()
                 .map(Entity::getUuid)
                 .flatMap(TierCache::getPlayerInfo);
@@ -155,10 +157,10 @@ public class TierTagger implements ModInitializer {
             ctx.getSource().sendFeedback(printPlayerInfo(info.get()));
         } else {
             ctx.getSource().sendFeedback(Text.of("[TierTagger] Searching..."));
-            TierCache.searchPlayer(selector.name())
+            TierCache.searchPlayer(playerName)
                     .thenAccept(p -> ctx.getSource().sendFeedback(printPlayerInfo(p)))
                     .exceptionally(t -> {
-                        ctx.getSource().sendError(Text.of("Could not find player " + selector.name()));
+                        ctx.getSource().sendError(Text.of("Could not find player " + playerName));
                         return null;
                     });
         }
@@ -172,7 +174,7 @@ public class TierTagger implements ModInitializer {
         info.rankings().forEach((m, r) -> {
             String tier = getTierText(r);
 
-            Text tierText = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier)));
+            Text tierText = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier))).formatted(Formatting.BOLD);
             text.append(Text.literal("\n").append(m.formatted()).append(": ").append(tierText));
         });
 
