@@ -68,7 +68,7 @@ public class TierTagger implements ModInitializer {
 
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registry) -> dispatcher.register(
                 literal(MOD_ID)
-                        .then(argument("player", PlayerArgumentType.player())
+                        .then(argument("player", StringArgumentType.string())
                                 .executes(TierTagger::displayTierInfo))));
 
         Ukutils.registerKeybinding(new KeyBinding("tiertagger.keybind.gamemode", GLFW.GLFW_KEY_UNKNOWN, "tiertagger.name"),
@@ -143,10 +143,10 @@ public class TierTagger implements ModInitializer {
     }
 
     private static int displayTierInfo(CommandContext<FabricClientCommandSource> ctx) {
-        PlayerArgumentType.PlayerSelector selector = ctx.getArgument("player", PlayerArgumentType.PlayerSelector.class);
+        String playerName = ctx.getArgument("player", String.class);
 
         Optional<PlayerInfo> info = ctx.getSource().getWorld().getPlayers().stream()
-                .filter(p -> p.getNameForScoreboard().equalsIgnoreCase(selector.name()) || p.getUuidAsString().equalsIgnoreCase(selector.name()))
+                .filter(p -> p.getNameForScoreboard().equalsIgnoreCase(playerName) || p.getUuidAsString().equalsIgnoreCase(playerName))
                 .findFirst()
                 .map(Entity::getUuid)
                 .flatMap(TierCache::getPlayerInfo);
@@ -155,10 +155,10 @@ public class TierTagger implements ModInitializer {
             ctx.getSource().sendFeedback(printPlayerInfo(info.get()));
         } else {
             ctx.getSource().sendFeedback(Text.of("[TierTagger] Searching..."));
-            TierCache.searchPlayer(selector.name())
+            TierCache.searchPlayer(playerName)
                     .thenAccept(p -> ctx.getSource().sendFeedback(printPlayerInfo(p)))
                     .exceptionally(t -> {
-                        ctx.getSource().sendError(Text.of("Could not find player " + selector.name()));
+                        ctx.getSource().sendError(Text.of("Could not find player " + playerName));
                         return null;
                     });
         }
