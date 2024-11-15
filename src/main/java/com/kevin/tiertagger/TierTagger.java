@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.kevin.tiertagger.config.TierTaggerConfig;
 import com.kevin.tiertagger.model.GameMode;
 import com.kevin.tiertagger.model.PlayerInfo;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import lombok.Getter;
 import net.fabricmc.api.ModInitializer;
