@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "tier-tagger",
-  "version": "${version}",
+  "version": "nerfed-${version}",
   "name": "TierTagger",
   "description": "[NERFED] A gorgeous mod which displays everyone's tier from the Vanilla Pvp Tierlist in game",
   "authors": ["netiyiy", "uku", "Candycup (lsn patcher)"],
