@@ -78,7 +78,7 @@ public class TierTagger implements ModInitializer {
             case TIER -> getPlayerTier(player.getUuid())
                     .map(entry -> {
                         String tier = getTierText(entry.getValue());
-                        Text formattedTier = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier)));
+                        Text formattedTier = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier))).formatted(Formatting.BOLD);
                         Text modeIcon = Text.literal(entry.getKey().getIcon()).styled(s -> s.withColor(entry.getKey().getIconColor()));
                         return Text.empty().append(modeIcon).append(" ").append(formattedTier);
                     })
@@ -89,8 +89,9 @@ public class TierTagger implements ModInitializer {
         };
 
         if (following != null) {
-            following.append(Text.literal(" | ").formatted(Formatting.GRAY));
-            return following.append(text);
+            return text.copy()
+                    .append(Text.literal(" | ").formatted(Formatting.GRAY))
+                    .append(following);
         }
 
         return text;
@@ -160,7 +161,7 @@ public class TierTagger implements ModInitializer {
         info.rankings().forEach((m, r) -> {
             String tier = getTierText(r);
 
-            Text tierText = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier)));
+            Text tierText = Text.literal(tier).styled(s -> s.withColor(getTierColor(tier))).formatted(Formatting.BOLD);
             text.append(Text.literal("\n").append(m.formatted()).append(": ").append(tierText));
         });
 
