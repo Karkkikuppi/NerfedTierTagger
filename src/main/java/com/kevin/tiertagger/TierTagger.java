@@ -43,7 +43,7 @@ public class TierTagger implements ModInitializer {
     private static final String UPDATE_URL_FORMAT = "https://api.modrinth.com/v2/project/dpkYdLu5/version?game_versions=%s";
 
     @Getter
-    private static final ConfigManager<TierTaggerConfig> manager = ConfigManager.create(TierTaggerConfig.class, MOD_ID);
+    private static final ConfigManager<TierTaggerConfig> manager = ConfigManager.createDefault(TierTaggerConfig.class, MOD_ID); // Fixed initialization
 
     @Getter
     private static final Logger logger = LoggerFactory.getLogger(TierTagger.class);
@@ -91,7 +91,7 @@ public class TierTagger implements ModInitializer {
                 .map(i -> i.getRankings().get(mode))
                 .map(TierTagger::getTierText)
                 .map(t -> Text.literal(t).styled(s -> s.withColor(getTierColor(t))))
-                .orElse(null);
+                .orElse(Text.empty());
     }
 
     @Nullable
@@ -111,7 +111,7 @@ public class TierTagger implements ModInitializer {
         PlayerArgumentType.PlayerSelector selector = ctx.getArgument("player", PlayerArgumentType.PlayerSelector.class);
 
         Optional<PlayerInfo> info = ctx.getSource().getWorld().getPlayers().stream()
-                .filter(p -> p.getEntityName().equalsIgnoreCase(selector.name()) || p.getUuidAsString().equalsIgnoreCase(selector.name()))
+                .filter(p -> p.getName().getString().equalsIgnoreCase(selector.name()) || p.getUuidAsString().equalsIgnoreCase(selector.name()))
                 .findFirst()
                 .map(Entity::getUuid)
                 .flatMap(TierCache::getPlayerInfo);
