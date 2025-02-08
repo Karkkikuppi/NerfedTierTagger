@@ -1,6 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.7-SNAPSHOT'
-    id "io.freefair.lombok" version "8.7.1"
+    id 'fabric-loom' version '1.9-SNAPSHOT'
+    id "io.freefair.lombok" version "8.11"
 }
 
 version = "${project.mod_version}+mc${project.minecraft_version}"
@@ -8,7 +8,10 @@ group = project.maven_group
 
 repositories {
     maven {
-        url "https://maven.uku3lig.net/releases"
+        url = "https://maven.uku3lig.net/releases"
+    }
+    maven {
+        url = "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"
     }
 }
 
@@ -21,6 +24,8 @@ dependencies {
     modImplementation(fabricApi.module("fabric-command-api-v2", project.fabric_api_version))
 
     modApi "net.uku3lig:ukulib:${project.ukulib_version}"
+
+    modRuntimeOnly "me.djtheredstoner:DevAuth-fabric:${project.devauth_version}"
 }
 
 processResources {

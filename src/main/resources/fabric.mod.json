@@ -4,7 +4,7 @@
   "version": "nerfed-${version}",
   "name": "TierTagger",
   "description": "[NERFED] A gorgeous mod which displays everyone's tier from the Vanilla Pvp Tierlist in game",
-  "authors": ["netiyiy", "uku", "Candycup (lsn patcher)"],
+  "authors": ["netiyiy", "uku", "Candycup (lsn patcher)", "ChrisThaBot (ported lsn patch to 1.21.4)"],
   "contact": {},
   "license": "MIT",
   "icon": "assets/tier-tagger/icon.png",
@@ -22,7 +22,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.16",
-    "minecraft": ">=1.21.2",
-    "ukulib": "^1.5.0"
+    "minecraft": ">=1.21.4",
+    "ukulib": "^1.6.0"
   }
 }
